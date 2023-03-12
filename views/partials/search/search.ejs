@@ -1,0 +1,19 @@
+
+<label for="start">Pick date:</label>
+
+<input type="date" id="at" name="trip-at"
+    value="2023-02-19"
+    min="2023-02-19" max="2029-02-19">
+
+
+<label for="branches">Branch:</label>
+<select name="branches" id="branches">
+    <% for(const val of data.branch_names){ %>
+        <option value="<%- val%>"> <%= val %> </option>
+    <%} %>
+</select>
+
+<input type="submit" value="Submit" onclick="onsub()">
+
+
+
