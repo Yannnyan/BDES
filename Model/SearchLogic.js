@@ -1,5 +1,5 @@
-import {get_orders_from_elastic, set_order_to_elastic, get_branch_names} from './db/elastic.js'
-import {dif} from './utils.js'
+import {get_orders_from_elastic, set_order_to_elastic, get_branch_names} from '../db/elastic.js'
+import {dif} from '../utils.js'
 
 class SearchLogic{
     constructor()

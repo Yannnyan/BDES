@@ -1,5 +1,5 @@
 
-import { Get_Orders, Save_Order } from "./mongo.js";
+import { Get_Orders, Save_Order } from "../db/mongo.js";
 import { Format_Order_Mongo } from "../utils.js";
 import { create_association, retrieve_associations, write_to_CSV } from "../ML/bigml.js";
 class AnalizeLogic

@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
-import {logger} from './Logger.js'
-import {Format_Order_Mongo} from './utils.js'
-import {config} from './config.js'
+import {logger} from '../Logger.js'
+import {Format_Order_Mongo} from '../utils.js'
+import {config} from '../config.js'
 var url = config.MONGO_CONNECTION_STRING
 
 const connectionParams={

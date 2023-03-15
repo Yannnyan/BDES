@@ -1,10 +1,10 @@
 import express from 'express'
-import {logger} from '../Logger.js'
-import { DashboardLogic } from './DashboardLogic.js'
+import {logger} from './Logger.js'
+import { DashboardLogic } from './Model/DashboardLogic.js'
 import { createServer } from 'http'
 import { Server } from 'socket.io'
-import { SearchLogic } from './SearchLogic.js'
-import {AnalizeLogic} from '../Model/AnalizeLogic.js'
+import { SearchLogic } from './Model/SearchLogic.js'
+import {AnalizeLogic} from './Model/AnalizeLogic.js'
 
 const dashboardlogic = new DashboardLogic()
 
