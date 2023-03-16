@@ -10,6 +10,7 @@ class DashboardLogic{
     {
         // Domain Objects
         this.company = new Company()
+        this.time = 0
         this.recieved_before_update = []
         this.is_updated = false
     }
@@ -24,21 +25,12 @@ class DashboardLogic{
             this.is_updated = true
             // process orders that were recieved before update
             this.company = new Company(data)
+            this.time = new Date(Date.parse(data.time))
             this.process_early_orders()
             calback()
         })
     }
     
-    get_orders_by_region()
-    {
-        var total_orders_by_region = {}
-        for(let key in this.closed_order_by_region)
-        {
-            total_orders_by_region[key] = +this.closed_order_by_region[key] + +this.open_order_by_region[key]
-        }
-        return total_orders_by_region
-    }
-
     process_early_orders()
     {
         while(this.recieved_before_update.length > 0)
@@ -47,19 +39,10 @@ class DashboardLogic{
         }
     }
 
-    get_avg_duration_per_region()
+    get_avg_duration_per_branch()
     {
-        let avg_duration_per_region = {}
+        let avg_duration_per_region = this.company.get_avg_duration_by_branch()
         
-        for(let key in this.sum_duration_by_branch)
-        {
-            let branch_id = +key.charAt(key.length - 1)
-            let closed_orders_by_branch = Object.keys(this.closed_orders_ids).reduce((prev, cur) => 
-            {
-                return branch_id === +cur.charAt(0) ? +prev + 1 : +prev
-            }, 0)
-            avg_duration_per_region[key] = this.sum_duration_by_branch[key] / closed_orders_by_branch
-        }
         let formated_duration = []
         for(let key in avg_duration_per_region)
         {
@@ -74,24 +57,28 @@ class DashboardLogic{
     get_toppings()
     {
         var topping_formatted = []
-        for(let key in this.toppings)
-        {
-            var val = {
-                "X_Axis": key,
-                "Y_Axis": +this.toppings[key]   
+        let toppings = this.company.get_total_toppings()
+        console.log(toppings)
+        if(Object.keys(toppings).length > 0)
+            for(let key in toppings)
+            {
+                var val = {
+                    "X_Axis": key,
+                    "Y_Axis": toppings[key]   
+                }
+                topping_formatted.push(val)
             }
-            topping_formatted.push(val)
-        }
         return topping_formatted;
     }
     get_time_order()
     {
         var time_formatted = []
-        for(let key in this.time_order)
+        let dist = this.company.get_time_dist_by_hours()
+        for(let key in dist)
         {
             var val = {
                 "X_Axis": key,
-                "Y_Axis": +this.time_order[key]
+                "Y_Axis": +dist[key]
             }
             time_formatted.push(val)
         }
@@ -102,15 +89,15 @@ class DashboardLogic{
     {
         var data = 
         {
-            avg: this.avg,
-            total: this.total,
-            open_orders: this.open,
-            branches: this.branches,
+            avg: this.company.get_average_order_duration(),
+            total: this.company.get_total_orders(),
+            open_orders: this.company.get_open_orders(),
+            branches: this.company.get_number_branches(),
             time: this.time,
-            toppings: this.get_toppings(),
+            toppings: this.company.get_total_toppings(),
             time_order: this.get_time_order(),
-            orders_by_region: this.get_orders_by_region(),
-            avg_duration_per_region: this.get_avg_duration_per_region()
+            orders_by_region: this.company.get_orders_by_region(),
+            avg_duration_per_region: this.company.get_avg_duration_by_branch()
         }
         return data
     }
@@ -144,8 +131,11 @@ class DashboardLogic{
                     status: 'Available_Order_Status.In_Progress'
                 }
         */
-        this.company.pipeline(order)
+        this.time = new Date()
+        this.company.recieve_order(order)
         var data = this.company.serialize()
+        data.time = this.time.toString();
+        data = JSON.stringify(data)
         logger.info(order)
         logger.info(data)
         update_redis(data);

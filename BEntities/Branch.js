@@ -22,26 +22,70 @@ class Branch
          */
         this.branch_name = data_from_redis.branch_name
         this.branch_location = data_from_redis.branch_location
-        console.log('branch init: ' + this.branch_name + " " + this.branch_location)
+
         if(data_from_redis.branch_orders === undefined)
             this.order_register = new OrderRegister()
-        this.order_register = new OrderRegister(data_from_redis.branch_orders)
+        else
+            this.order_register = new OrderRegister(data_from_redis.branch_orders)
 
-    }
-    get_avg_duration()
-    {
-        let sum = this.order_register.orders.reduce((order, cur)=> cur + order.order_duration, 0)
-        return sum / this.order_register.orders.length
     }
     recieve_order(order)
     {
-
-        return this.order_register.recieve_order
+        this.order_register.recieve_order(order)
+    }
+    get_avg_duration()
+    {
+        let sum = this.order_register.orders.reduce((prev, order)=> prev + order.order_duration, 0)
+        return sum / this.order_register.orders.length
+    }
+    get_num_open_orders()
+    {
+        return this.order_register.orders.reduce((prev, order) => prev + (order.status ==='In_Progress' ? 1 : 0), 0)
+    }
+    get_num_closed_orders()
+    {
+        return this.order_register.orders.reduce((prev, cur) => prev + cur.status === 'Done' ? 1 : 0, 0);
+    }
+    /**
+     * returns the order time distribution for this branch
+     */
+    get_order_time_dist()
+    {
+        let dist = this.order_register.orders.reduce((time_dist, order) => {
+            let hour = '' + new Date(order.order_date).getHours();
+            if (time_dist[hour] === undefined)
+            {
+                time_dist[hour] = 0;
+            }
+                time_dist[hour] += 1;
+            return time_dist
+        }, {})
+        return dist;
+    }
+    
+    get_total_orders()
+    {
+        return this.order_register.orders.length
     }
 
+    get_total_toppings()
+    {
+        let toppings = this.order_register.orders.reduce((prev, order) => {
+            for(let topping of order.toppings)
+            {
+                if(topping === undefined)
+                    continue;
+                if(prev[topping] === undefined)
+                    prev[topping] = 0
+                prev[topping] += 1
+            }
+            return prev
+        }, {})
+        return toppings 
+    }
     serialize()
     {
-        orders_serialized = this.order_register.serialize()
+        let orders_serialized = this.order_register.serialize()
         let data = {
             branch_name: this.branch_name,
             branch_location: this.branch_location,

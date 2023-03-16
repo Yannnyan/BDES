@@ -22,15 +22,11 @@ class Company{
          * 
          */
         this.branches = []
-        this.pipeline = function (order) {
-            this.recieve_order(order)(order)(order)
-        }
-        if(data === undefined){
+        if(data === undefined || data.company === undefined){
             this.company_name = 'default'
             return
         }
         this.company_name = data.company.company_name || 'default'
-        console.log('company name init: ' + this.company_name)
         for(let branch of data.company.branches)
         {
             this.branches.push(new Branch(branch))
@@ -38,13 +34,19 @@ class Company{
     }
     recieve_order(order)
     {
+
         // check if we need to create new branch
-        if(this.branches.map((branch) => branch.branch_name).includes(order.branch_name))
-            this.branches.push(new Branch({
-                branch_name: order.branch_name,
-                branch_location: order.branch_location}))
+        var branch;
+        if(!this.branches.map((branch) => branch.branch_name).includes(order.branch_name))
+        {
+            branch = new Branch({
+            branch_name: order.branch_name,
+            branch_location: order.branch_location})
+            this.branches.push(branch)
+        }
         // check which branch needs to recieve the order
-        return this.branches.find((branch) => branch.branch_name === order.branch_name).recieve_order
+        this.branches.find(branch => branch.branch_name === order.branch_name).recieve_order(order)
+
     }
 
     // hot details are now functions
@@ -56,7 +58,7 @@ class Company{
         let sum = 0
         let num_branches = this.branches.length
         sum = this.branches.reduce(
-            (branch, cur) => cur + branch.get_avg_duration(), 0
+            (prev, branch) => prev + branch.get_avg_duration(), 0
             )
         return sum / num_branches
     }
@@ -66,9 +68,7 @@ class Company{
     get_open_orders()
     {
         let open_orders = this.branches.reduce(
-            (branch, cur) => cur + branch.order_register.orders.reduce(
-                (order, cur_total) => cur_total + (order.status === 'In_Progress' ? 1 : 0), 0
-            ), 0
+            (prev, branch) => prev + branch.get_num_open_orders(), 0
         )
         return open_orders
     }
@@ -78,7 +78,7 @@ class Company{
     get_total_orders()
     {
         let total = this.branches.reduce(
-            (branch, cur) => branch.order_register.orders.length + cur, 0
+            (prev, branch) => branch.get_total_orders() + prev, 0
         )
         return total
     }
@@ -96,7 +96,11 @@ class Company{
     {
         return this.branches.map((branch) => branch.branch_name)
     }
-
+    get_branch_regions()
+    {
+        var regions_with_copies = this.branches.map((branch) => branch.branch_location)
+        return Array.from(new Set(regions_with_copies))
+    }
     // graph details
     get_avg_duration_by_branch()
     {
@@ -107,27 +111,69 @@ class Company{
         }
         return data
     }
+    get_avg_duration_by_region()
+    {
+        let data = {}
+        for(let region of this.get_branch_regions())
+        {
+            data[region] = this.branches.filter((branch, index) => {
+                return branch.branch_location === region
+            }).reduce((prev, branch) => prev + branch.get_avg_duration(), 0)
+        }
+        return data
+    }
 
+    get_orders_by_branch()
+    {
+        let data = {}
+        for(let branch of this.branches)
+        {
+            data[branch.branch_name] = this.branches.find((b) => b.branch_name === branch.branch_name).get_total_orders()
+        }
+        return data;
+    }
+    get_orders_by_region()
+    {
+        let data = {}
+        for(let region of this.get_branch_regions())
+        {
+            data[region] = this.branches.filter((branch, index) => branch.branch_location === region)
+                            .reduce((prev, branch) => prev + branch.get_total_orders(), 0)
+        }
+        return data;
+    }
     get_total_toppings()
     {
-        let all_toppings = this.branches.reduce((prev_arr, branch) =>{
-            prev_arr.push(...branch.order_register.orders.map(
-                (order) => order.toppings))
-                ; return prev_arr
-        } ,[])
-        let toppings = {}
-        for(let topping of all_toppings)
-        {
-            if(toppings[topping] === undefined)
+        
+        let toppings = this.branches.reduce((prev, branch) => {
+            let branch_toppings = branch.get_total_toppings()
+            for(let topping in branch_toppings)
             {
-                toppings[topping] = 1
-                continue
+                if(prev[topping] === undefined)
+                    prev[topping] = 0
+                prev[topping] += branch_toppings[topping] 
             }
-            else{
-                toppings[topping] += 1
+            return prev
+        }, {})
+        return toppings
+    }
+
+    get_time_dist_by_hours()
+    {
+        var dist = {}
+        for(let branch of this.branches)
+        {
+            var branch_dist = branch.get_order_time_dist()
+            for(let key in branch_dist)
+            {
+                if(dist[key] === undefined)
+                {
+                    dist[key] = 0
+                }
+                dist[key] += branch_dist[key]
             }
         }
-        return toppings
+        return dist
     }
 
     serialize()
@@ -137,13 +183,13 @@ class Company{
         {
             branches_serialized.push(branch.serialize())
         }
-        data = {
+        let data = {
             company: {
                 company_name: this.company_name,
                 branches: branches_serialized
             }
         }
-        return JSON.stringify(data)
+        return data
     }
 
 }

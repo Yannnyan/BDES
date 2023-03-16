@@ -18,31 +18,22 @@ class OrderRegister
         // this.closed_orders_ids = {} //closed orders
         // this.order_time = {}
         this.orders = []
-        if(Array.isArray(data_from_redis))
-            for(let order of data_from_redis)
+        if(data_from_redis === undefined)
+            return
+        if(Array.isArray(data_from_redis.orders))
+            for(let order of data_from_redis.orders)
             {
-                this.orders.push(new Order(order))
+                this.orders.push(new Order(order, 'redis'))
             }
     }
 
     recieve_order(order)
     {
-        this.orders.push(new Order({
-            
-        }))
+        this.orders.push(new Order(
+            order
+        , 'customer'))
     }
-    get_num_open_orders()
-    {
-
-    }
-    get_num_closed_orders()
-    {
-
-    }
-    get_order_time_dist()
-    {
-
-    }
+    
     serialize()
     {
         let serialized_orders = []
