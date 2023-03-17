@@ -144,6 +144,38 @@ async function retrieve_associations(calback)
 ```
 * bigml with node supports csv file formatting and other formats that were not familiar to me, so everytime I had to write all my data to csv file before creating associations.
 # Elasticsearch(docker image)
+Elasticsearch takes a lot of ram for no reason actually when running it's docker image, to override the max ram capacity I used this enviroment variable:
+```js
+ES_JAVA_OPTS=-Xms256m -Xmx256m
+```
+elasticsearch has https connection security which means that data needs to be encoded with ssl but, to override this i used this enviroment variable:
+```js
+xpack.security.enabled=false
+```
+and to specify only one node of elasticsearch i used the enviroment variable:
+```js
+discovery.type=single-node
+```
+extra:
+```js
+ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+```
+Kibana is nice to run with elasticsearch, its very easy to see the data stored and easy to make queries.
+To delete all indices in the database after testing i used this function
+```js
+async function trash_database()
+{
+    get_branch_names
+    ((indices) => {
+        elasticClient.indices.delete({
+            index: indices
+        })
+    })
+}
+```
 # winston (logger)
 # config files
 # Async Developement(promises, callbacks)
