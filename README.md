@@ -33,14 +33,86 @@ The Order Register entity is used to manage orders (i.e recieve only relevant or
 The Order entity holds the details about an order.
 The Dashboard logic and formulating is done in the DashboardLogic Class, The same goes for the AnalyzeLogic, and the SearchLogic.
 # Kafka (cloud Karakafka service)
-For this project I created a topic in cloud karafka, then i used rdkafka library in nodejs to build a consumer side and a producer side. The consumer is the main server, and the producer is the pizza company simulator. i used ![this](https://github.com/CloudKarafka/nodejs-kafka-example/blob/main/consumer.js) sample code for the consumer, and this ![this](https://github.com/CloudKarafka/nodejs-kafka-example/blob/main/producer.js) for the producer. To use this in my application I had to create a seperate config file, such that people can't see my configurations and spam my server. note that in the config I had to change medata.broker.list to the information in cloudkarafka, and aswell username and password ofcourse. also, I had to create a topic in cloud karafka and use the topic's name in the code.
+For this project I created a topic in cloud karafka, then i used rdkafka library in nodejs to build a consumer side and a producer side. The consumer is the main server, and the producer is the pizza company simulator. i used [this](https://github.com/CloudKarafka/nodejs-kafka-example/blob/main/consumer.js) sample code for the consumer, and this [this](https://github.com/CloudKarafka/nodejs-kafka-example/blob/main/producer.js) for the producer. To use this in my application I had to create a seperate config file, such that people can't see my configurations and spam my server. note that in the config I had to change medata.broker.list to the information in cloudkarafka, and aswell username and password ofcourse. also, I had to create a topic in cloud karafka and use the topic's name in the code.
 * Things I found out while working with kafka:
 1) Kafka is designed to recieve a lot of data, big enough such that nodejs can't handle them I got error that nodejs had memory leaks due to using the kafka consumer the wrong way, instead i used the kafka consumer to send http messages to the server which is wrong. So I fixed it running the kafka consumer asyncroniously from the server code.
 2) SetTimeout is unnecessary and kills the consumer after threshold. So I used the kafka consumer and was surprised that it shut down after few minutes.
 # Redis (docker image)
-
+To use redis in my application I downloaded a docker image called 'redis', also note that you can pass redis through docker the enviroment variable 
+```js
+ALLOW_EMPTY_PASSWORD=yes
+```
+for no use in password when sending or recieving data. I read that redis stores data in the RAM, and used for caching. Which then connected the dots for me, why im using redis for hot data storage in this application. I found out that redis does not support by default nested json storage, so i decided to store all the data in one key, as a string. Making redis fairly simple using js 
+``` js
+JSON.stringify()
+```
+, and 
+```js 
+JSON.parse()
+``` 
+functions. I used this kind of formatting for my data, making it easy to deserialize the data into objects, 
+```js
+{company: {
+            company_name: 'bla bla',
+            branches: [
+            {branch_name: 'bla bla bla',
+            branch_location: 'haifa',
+            branch_orders: [{
+                date: '2023-03-10 13:19:09.272751',
+                duration: 50,
+                status: 'Done',
+                toppings: ['Tomato', 'Eggplant']}]}]
+            }}
+```
 # Mongodb (mongoose ODM, cloud atlas)
+To use mongoose, I first had to ccreate a scheme for my data, the scheme looks like that
+```js
+start_date : {
+        type: Date,
+        required: true,
+        unique: false
+    },
+    end_date : {
+        type: Date,
+        required: true,
+        unique: false
+    },
+    toppings: {
+        type: Array,
+        required: true,
+        unique: false
+    },
+    branch_id: {
+        type: Number,
+        required: true,
+        unique: false
+
+    },
+    unique_order_id: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    branch_location: {
+        type: String,
+        required: true,
+        unique: false
+    },
+    branch_name: {
+        type: String,
+        required: true,
+        unique: false
+    },
+    status: {
+        type: String,
+        require: true,
+        unique: false
+    }
+```
+* Note that in version 8.15 that i used, old tutorials for mongoose which use callback functions are no longer relevant because new mongoose does not support callback functions. 
+* So I figured that i would create async set order and get order and await for the promise.
 # Nodejs express 
+
 # Bigml(cloud)
 # Elasticsearch(docker image)
 # winston (logger)
