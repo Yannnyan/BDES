@@ -37,7 +37,8 @@ For this project I created a topic in cloud karafka, then i used rdkafka library
 * Things I found out while working with kafka:
 1) Kafka is designed to recieve a lot of data, big enough such that nodejs can't handle them I got error that nodejs had memory leaks due to using the kafka consumer the wrong way, instead i used the kafka consumer to send http messages to the server which is wrong. So I fixed it running the kafka consumer asyncroniously from the server code.
 2) SetTimeout is unnecessary and kills the consumer after threshold. So I used the kafka consumer and was surprised that it shut down after few minutes.
-# Redis (docker image)
+# Lambda Architecture(Hot channel (redis))
+## Redis (docker image)
 To use redis in my application I downloaded a docker image called 'redis', also note that you can pass redis through docker the enviroment variable 
 ```js
 ALLOW_EMPTY_PASSWORD=yes
@@ -64,7 +65,25 @@ functions. I used this kind of formatting for my data, making it easy to deseria
                 toppings: ['Tomato', 'Eggplant']}]}]
             }}
 ```
-# Mongodb (mongoose ODM, cloud atlas)
+# Nodejs express 
+I used Nodejs with express for the main server, and also for the simulator server.
+Things I struggled with coding the main server:
+* Most tutorials use common javascript, yet it's recommended to use ES type. At first I didn't get why i can't use require in my code. Then I figured that if the module is named with .js then the javascript must be written in ES format, but if the module is named with .cjs then it's written in common javascript format. That's actually very important.
+* I Figured how to import Modules written in cjs with es by using the syntax:
+```js
+import x from 'module_y'
+```
+* To recieve json/application data with express, I had to tell explicitly for express to use 
+```js
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+```
+* To set ejs rendering I had to use:
+```js
+app.set('view engine', 'ejs');
+```
+# Cold Channel(bigml, mongodb, elasticsearch))
+## Mongodb (mongoose ODM, cloud atlas)
 To use mongoose, I first had to ccreate a scheme for my data, the scheme looks like that
 ```js
 start_date : {
@@ -111,24 +130,7 @@ start_date : {
 ```
 * Note that in version 8.15 that i used, old tutorials for mongoose which use callback functions are no longer relevant because new mongoose does not support callback functions. 
 * So I figured that i would create async set order and get orders and await for the promise.
-# Nodejs express 
-I used Nodejs with express for the main server, and also for the simulator server.
-Things I struggled with coding the main server:
-* Most tutorials use common javascript, yet it's recommended to use ES type. At first I didn't get why i can't use require in my code. Then I figured that if the module is named with .js then the javascript must be written in ES format, but if the module is named with .cjs then it's written in common javascript format. That's actually very important.
-* I Figured how to import Modules written in cjs with es by using the syntax:
-```js
-import x from 'module_y'
-```
-* To recieve json/application data with express, I had to tell explicitly for express to use 
-```js
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-```
-* To set ejs rendering I had to use:
-```js
-app.set('view engine', 'ejs');
-```
-# Bigml(cloud)
+## Bigml(cloud)
 Bigml is using GET POST PUT DELETE syntax for everything, so i actually used my browser to check some of the stuff i created in the service. 
 * Note that the connection parameters like username and password are passed in the URI. docs can be found [here](https://bigml.com/api/authentication)
 * I used the help code and bigml library for js, can be found [here](https://github.com/bigmlcom/bigml-node#:~:text=var%20bigml%20%3D-,require,-(%27bigml%27))
@@ -143,7 +145,7 @@ async function retrieve_associations(calback)
         ,15000)
 ```
 * bigml with node supports csv file formatting and other formats that were not familiar to me, so everytime I had to write all my data to csv file before creating associations.
-# Elasticsearch(docker image)
+## Elasticsearch(docker image)
 Elasticsearch takes a lot of ram for no reason actually when running it's docker image, to override the max ram capacity I used this enviroment variable:
 ```js
 ES_JAVA_OPTS=-Xms256m -Xmx256m
@@ -175,18 +177,84 @@ async function trash_database()
         })
     })
 }
+async function get_branch_names(calback)
+{
+    elasticClient.cat.indices().then((res) =>
+    {
+        var regex = /(^pizza)/g 
+        var matches = JSON.stringify(res).split(' ').map((str) => str.match(regex) !== null ? str : null).filter((element) => element !== null)
+        calback(matches)
+    })
+}
 ```
 # winston (logger)
+I used winston logger library to log into seperate files for each of the modules. Very helpful in debugging.
 # config files
+I used one config file which is ES module and exports the configurations.
+I found it very helpfull to hide private details from the view and it's comfortable to know that all those are in one spot.
 # Async Developement(promises, callbacks)
+I got an advice from my lecturer that writing sync code for a server is not serious, and should not be used. It stuck with me. And makes a lot of sense because sync code will cause the whole app to wait for a task to be done, like interacting with bigml if it was sync then for 15 seconds or more the application is stuck waiting for a respnse from bigml server.
 # Docker (docker images, docker-compose)
+At first I thought working with docker requires to have images downloaded on docker desktop. Yet then I realized that calling docker-compose up actually downloads the images for you, if you don't have them yet. 
 # Git (gitignore)
+I used fairly simple gitignore i found to ignore node modules and package, and logs, and my config file.
 # Server side Rendering (EJS)
+I used card based design to server side render with ejs.
+Card based design looks like this:
+![image](https://user-images.githubusercontent.com/82415308/225989244-15448d44-ac3c-483d-a3ca-55d86f7b1852.png)
+where we can see that we have 4 main components inside our body tag, which is the navigation bar on top which tells up where we are, the content of the page i.e search.ejs, and the sidebar which has links to traverse the site, and a results card which contains the result from the search in this particular page.
+* to pass data from node to the cards, we can use:
+```js
+res.render('where we are', data)
+```
+Whereas data is an object in js
 # Full Duplex Communication(WebSockets protocol)
-# Lambda Architecture(Hot channel (redis)
-# cold channel(bigml, mongodb, elasticsearch))
+I used Web Sockets protocol to communicate with the client from the server side. To update the Hot data the user sees whenever an order is recieved by kafka. 
+Server side emitting
+```js
+function recieve_order(order)
+{
+    order = JSON.parse(order)
+    dashboardlogic.process_order(order)
+    searchlogic.process_order(order)
+    analizelogic.process_order(order)
+    io.emit('update', dashboardlogic.get_data())
+}
+```
+Client side recieving:
+```js
+var socket = io('localhost:3000');
+    socket.on('update', (data) =>{
+        console.log('recieved update')
+        document.getElementById("open_branches").firstChild.innerHTML = 'Open Branches: \n' + data.branches;
+        document.getElementById("avg_handle_time").firstChild.innerHTML = "Avg Treatmnt Time: \n"+ (Math.round(data.avg * 100) / 100).toFixed(2);
+        document.getElementById("orders_inprog").firstChild.innerHTML = "Orders In Progress: \n" +data.open_orders;
+        document.getElementById("total_orders").firstChild.innerHTML = "Total Orders: \n" +data.total;
+        document.getElementById("time").innerHTML = "Last Updated Date: " + data.time;
+        make_horizontal_histogram('top_5_toppings', data.toppings,100);
+        make_pie_chart('orders_by_region', data.orders_by_region);
+        make_horizontal_histogram('top_5_branch_ordertime', data.avg_duration_per_region, 300);
+        make_graph('total_orders_during_day', data.time_order)
+```
+
+
 # Dashboard (d3 library)
+I used D3JS library to make and style graphs in the dashboard. 
+
 # Mocha- Chai Testing
 ![image](https://user-images.githubusercontent.com/82415308/225611279-bc910309-cb89-490a-a103-91442a7dfe4c.png)
 
 ![image](https://user-images.githubusercontent.com/82415308/225610830-8e868ecf-0c69-42e9-9bc1-879bf12e9f50.png)
+
+
+# Images of the System:
+### Dashboard
+![image](https://user-images.githubusercontent.com/82415308/226000331-8d407742-7b31-435d-b61b-0b77eb4f27c9.png)
+![image](https://user-images.githubusercontent.com/82415308/226000414-dcc2dcab-8d65-4592-bd3f-82374b897272.png)
+![image](https://user-images.githubusercontent.com/82415308/226000474-5eb2b6f5-d322-4bdd-9621-4fef453d70ef.png)
+### Search
+![image](https://user-images.githubusercontent.com/82415308/226001106-fab999c5-c8b9-43e2-8fc3-a30945e0dda8.png)
+### Analyze
+![image](https://user-images.githubusercontent.com/82415308/226043256-802cd089-4f1e-4e61-934d-215c57d6ca48.png)
+
+
