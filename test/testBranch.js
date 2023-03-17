@@ -68,9 +68,13 @@ describe('Testing Branch Class', function() {
         var branch = new Branch(branch_details)
         let order2_clone = JSON.parse(JSON.stringify(order2))
         order2_clone.status = 'Available_Order_Status.In_Progress'
+        let order2_clone_closed = JSON.parse(JSON.stringify(order2))
+        order2_clone_closed.status = 'Available_Order_Status.Done'
         branch.recieve_order(order1)
         branch.recieve_order(order2_clone)
         expect(branch.get_num_open_orders()).to.equal(1)
+        branch.recieve_order(order2_clone_closed)
+        expect(branch.get_num_open_orders()).to.equal(0)
         Done()
     })
     it('Testing order_time_dist', function(Done) {

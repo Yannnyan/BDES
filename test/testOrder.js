@@ -22,6 +22,16 @@ describe('Testing Order Class', function() {
         expect(order.status, 'Testing order status').to.equal('Done')
         let arr = [ "Eggplant", "Tomato", "Mushroom", "Olive" ]
         expect(order.toppings, 'Testing order toppings').deep.to.equal(arr)
+
+        var order2_clone = JSON.parse(JSON.stringify(order2))
+        order2_clone.status = 'Available_Order_Status.In_Progress'
+        order2_clone.end_date = 0
+        var o = new Order(order2_clone, 'customer')
+        expect(o.order_date, 'Testing order date').to.equal("2023-03-16 09:59:31.913502")
+        expect(o.order_id, 'Testing order id').to.equal("2,43")
+        expect(o.order_duration, 'Testing order duration').to.equal(0)
+        expect(o.status, 'Testing order status').to.equal('In_Progress')
+        expect(o.toppings, 'Testing order toppings').deep.to.equal(arr)
         Done()
     })
     it('Testing Constructor Redis', function(Done) {

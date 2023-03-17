@@ -36,15 +36,23 @@ class Branch
     get_avg_duration()
     {
         let sum = this.order_register.orders.reduce((prev, order)=> prev + order.order_duration, 0)
-        return sum / this.order_register.orders.length
+        return sum / this.get_num_closed_orders()
     }
     get_num_open_orders()
     {
-        return this.order_register.orders.reduce((prev, order) => prev + (order.status ==='In_Progress' ? 1 : 0), 0)
+        // get the orders in progress
+        var open = this.order_register.orders.filter((order) => order.status === 'In_Progress')
+        // get the orders done
+        var closed = this.order_register.orders.filter((order) => order.status === 'Done')
+        // remove orders that are in open but are in closed too
+        var open_but_not_closed = open.filter((order) => !closed.find((order1) => order1.order_id === order.order_id))
+        // count those orders
+        var total = open_but_not_closed.reduce((prev, order) => prev + (order.status ==='In_Progress' ? 1 : 0), 0)
+        return total
     }
     get_num_closed_orders()
     {
-        return this.order_register.orders.reduce((prev, cur) => prev + cur.status === 'Done' ? 1 : 0, 0);
+        return this.order_register.orders.reduce((prev, cur) => prev + (cur.status === 'Done' ? 1 : 0), 0);
     }
     /**
      * returns the order time distribution for this branch
@@ -73,7 +81,7 @@ class Branch
         let toppings = this.order_register.orders.reduce((prev, order) => {
             for(let topping of order.toppings)
             {
-                if(topping === undefined)
+                if(!topping)
                     continue;
                 if(prev[topping] === undefined)
                     prev[topping] = 0

@@ -20,10 +20,14 @@ class OrderRegister
         this.orders = []
         if(data_from_redis === undefined)
             return
+        let current_date = new Date()
         if(Array.isArray(data_from_redis.orders))
             for(let order of data_from_redis.orders)
             {
-                this.orders.push(new Order(order, 'redis'))
+                let order_date = new Date(Date.parse(order.order_date))
+                // only push orders that happened today!
+                if(order_date.getDay() === current_date.getDay())
+                    this.orders.push(new Order(order, 'redis'))
             }
     }
 

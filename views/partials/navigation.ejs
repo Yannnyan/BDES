@@ -1,6 +1,7 @@
 
 <div class="topnav">
-    <p id="time">Last Updated Date: <%- data.time %></p>
+    <% var time = new Date(Date.parse(data.time)) %>
+    <p id="time">Last Updated Date: <%- time.toTimeString().split(' ')[0] %></p>
     <p id="info"><%- data.location %></p>
     
 </div>

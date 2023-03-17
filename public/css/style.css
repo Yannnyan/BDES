@@ -4,7 +4,7 @@ td, th {
 
 .navigation {
   color: Black;
-  background-color: rgb(211, 240, 240);
+  background-color: rgb(11, 182, 255);
   border-bottom: 1px black solid;
   text-align: center;
   z-index: 1;
@@ -15,14 +15,14 @@ td, th {
 }
 
 .sidebar {
-  color: rgba(57, 90, 224, 0.81);
+  color: #e60049;
   height: 100%;
-  width: 160px;
+  width: 145px;
   position: fixed;
   z-index: 2;
   top: 0;
   left: 0;
-  background-color: #41a99ea8;
+  background-color: rgba(80, 233, 144, 0.712);
   overflow-x: hidden;
   padding-top: 20px;
   text-align: center;
@@ -86,7 +86,7 @@ a {
 }
 
 .mainActivity {
-  background-color: rgb(211, 240, 240);
+  background-color: #F1F1F1;
   display: block;
   width:80%;
   margin:auto;
@@ -98,12 +98,13 @@ a {
 
 .company_info p{
   text-align: center;
-  position: relative;
+  /*position: relative; 
   top: 50%;
-  transform: translateY(-50%);
+  transform: translateY(-50%); */
+  
 }
 
-#company_information div {
+#company_information div div {
   display: inline-block;
   width: 130px;
   height: 50px;  
@@ -113,16 +114,24 @@ a {
 
 #company_information {
   padding: 50px;
-
+  /* background-color: #afc6f8; */
+  width: 90%;
+  /* box-shadow: 10px 10px; */
+  /* margin-top:100px; */
+  padding-top: 40px;
+  
+  /* border: solid black 5px; */
 }
+
 
 .label_top {
   display: block;
+  
 }
 
 #company_information div div {
   display: block;
-  background-color: burlywood;
+  background-color: #8bd3c7;
   width: 100%;
   height: 100%;
 }
@@ -145,7 +154,60 @@ a {
 }
 
 #metrics {
+  margin-top: 20px;
+  padding: 50px;
   display: inline-block;
-  background-color: rgb(211, 240, 240);
+  background-color: #8bd3c7;
   height:100%;
+  width:90%;
+  /* border: solid black 5px; */
+}
+
+.hot {
+  /* padding: 10px 10px 5px 45px; */
+  background-color: #9b19f5;
+  /* border: .5px solid black; */
+  /* text-shadow: .5px 0px; */
+  
+}
+
+.metric {
+  background-color: rgb(13, 136, 230);
+  margin-top: 30px;
+  padding: 10px 0 10px 10px;
+  border: 1px solid black;
+}
+
+.wrapper {
+  display: inline-grid;
+  grid-template-columns: auto auto auto auto;
+  
+  background-color: #3e2723;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 10px 10px;
+
+}
+.grid-item {
+  background-color: #80cbc4;
+  border: 5px  solid #fff;
+  /* padding: 40px; */
+  font-size: 20px;
+  text-align: center;
+}
+.one {
+  grid-column: 1;
+  grid-row: 1;
+}
+.two {
+  grid-column: 2;
+  grid-row: 1 ;
+}
+.three {
+  grid-column: 1;
+  grid-row: 2;
+}
+.four {
+  grid-column: 2;
+  grid-row: 2;
 }

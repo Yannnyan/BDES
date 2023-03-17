@@ -58,7 +58,7 @@ class Company{
         let sum = 0
         let num_branches = this.branches.length
         sum = this.branches.reduce(
-            (prev, branch) => prev + branch.get_avg_duration(), 0
+            (prev, branch) => prev + branch.get_avg_duration() || 0, 0
             )
         return sum / num_branches
     }
@@ -68,7 +68,7 @@ class Company{
     get_open_orders()
     {
         let open_orders = this.branches.reduce(
-            (prev, branch) => prev + branch.get_num_open_orders(), 0
+            (prev, branch) => prev + branch.get_num_open_orders() || 0, 0
         )
         return open_orders
     }
@@ -78,7 +78,7 @@ class Company{
     get_total_orders()
     {
         let total = this.branches.reduce(
-            (prev, branch) => branch.get_total_orders() + prev, 0
+            (prev, branch) => (branch.get_total_orders() || 0) + prev , 0
         )
         return total
     }
@@ -87,7 +87,7 @@ class Company{
      */
     get_number_branches()
     {
-        return this.branches.length
+        return this.branches.length || 0
     }
     /**
      * Returns the branch names
@@ -107,7 +107,7 @@ class Company{
         let data = {}
         for(let name of this.get_branch_names())
         {
-            data[name] = this.branches.find((branch)=> branch.branch_name === name).get_avg_duration()
+            data[name] = this.branches.find((branch)=> branch.branch_name === name).get_avg_duration() || 0
         }
         return data
     }
@@ -158,7 +158,7 @@ class Company{
         return toppings
     }
 
-    get_time_dist_by_hours()
+    get_time_dist()
     {
         var dist = {}
         for(let branch of this.branches)

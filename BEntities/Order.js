@@ -15,7 +15,7 @@ class Order
         else{
             this.order_id = data.unique_order_id;
             this.toppings = Array.isArray(data.toppings) ? data.toppings : [data.toppings];
-            this.order_duration = data.end_date !== undefined ? dif(data.end_date, data.start_date).getSeconds() : 0
+            this.order_duration = data.end_date ? dif(data.end_date, data.start_date).getSeconds() : 0
             this.status = data.status.split('.')[1]
             this.order_date = data.start_date;
         }

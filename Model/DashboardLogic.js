@@ -42,7 +42,7 @@ class DashboardLogic{
     get_avg_duration_per_branch()
     {
         let avg_duration_per_region = this.company.get_avg_duration_by_branch()
-        
+        avg_duration_per_region = this.get_top_5(avg_duration_per_region)
         let formated_duration = []
         for(let key in avg_duration_per_region)
         {
@@ -54,11 +54,30 @@ class DashboardLogic{
         }
         return formated_duration
     }
+    get_top_5(dict)
+    {
+        // Create items array
+        var items = Object.keys(dict).map(function(key) {
+            return [key, dict[key]];
+        });
+        
+        // Sort the array based on the second element
+        items.sort(function(first, second) {
+            return second[1] - first[1];
+        });
+        items = items.slice(0, 5);
+        var d = {}
+        for(let item of items)
+        {
+            d[item[0]] = item[1]
+        }
+        return d
+    }
     get_toppings()
     {
         var topping_formatted = []
         let toppings = this.company.get_total_toppings()
-        console.log(toppings)
+        toppings = this.get_top_5(toppings)
         if(Object.keys(toppings).length > 0)
             for(let key in toppings)
             {
@@ -73,7 +92,7 @@ class DashboardLogic{
     get_time_order()
     {
         var time_formatted = []
-        let dist = this.company.get_time_dist_by_hours()
+        let dist = this.company.get_time_dist()
         for(let key in dist)
         {
             var val = {
@@ -94,10 +113,10 @@ class DashboardLogic{
             open_orders: this.company.get_open_orders(),
             branches: this.company.get_number_branches(),
             time: this.time,
-            toppings: this.company.get_total_toppings(),
+            toppings: this.get_toppings(),
             time_order: this.get_time_order(),
-            orders_by_region: this.company.get_orders_by_region(),
-            avg_duration_per_region: this.company.get_avg_duration_by_branch()
+            orders_by_region: this.company.get_orders_by_region(), // pie chart
+            avg_duration_per_region: this.get_avg_duration_per_branch()
         }
         return data
     }

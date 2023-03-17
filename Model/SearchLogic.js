@@ -24,7 +24,6 @@ class SearchLogic{
 
     format_orders(orders)
     {
-        console.log(orders)
         return orders.map((order) => {
             var toppings = typeof Array.isArray(order._source.toppings) ? order._source.toppings : [order._source.toppings]
             var duration = dif(order._source.end_date, (order._source.start_date+ " " + order._source.time)).getTime() / 1000

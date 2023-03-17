@@ -5,7 +5,8 @@ import { createServer } from 'http'
 import { Server } from 'socket.io'
 import { SearchLogic } from './Model/SearchLogic.js'
 import {AnalizeLogic} from './Model/AnalizeLogic.js'
-
+import {connectKafka} from './KafkaConsumer.js'
+connectKafka()
 const dashboardlogic = new DashboardLogic()
 
 const searchlogic = new SearchLogic()
@@ -30,18 +31,9 @@ app.use(express.json());
 app.set('view engine', 'ejs');
 
 app.get('/', (req, res) => {
-    // var data = 
-    // {
-    //     location: 'Main View Big Data Company',
-        
-    // }
-    // console.log(data)
-    // res.render('index', {data: data})
     dashboardlogic.update_params(() => {
-        console.log(dashboardlogic.get_toppings())
         var data = dashboardlogic.get_data()
         data.location = 'Main View Big Data Company'
-        
         res.render('index', {data: data})
     })
     
@@ -77,7 +69,6 @@ app.get('/analyzesmth', (req, res) => {
     let start_date = new Date(Date.parse(start))
     let end_date = new Date(Date.parse(end))
     analizelogic.Get_Association_Rules(start_date, end_date, (data) => {
-        console.log(JSON.stringify(data))
         res.send(JSON.stringify(data));
     })
 
@@ -123,15 +114,11 @@ io.on('update serv', (data)=> {
 
 function recieve_order(order)
 {
-    dashboardlogic.process_order(JSON.parse(order))
-    io.emit('update', 
-    {
-        branches: dashboardlogic.branches, 
-        avg: dashboardlogic.avg, 
-        open_orders: dashboardlogic.open,
-        total: dashboardlogic.total,
-        time: dashboardlogic.time
-    })
+    order = JSON.parse(order)
+    dashboardlogic.process_order(order)
+    searchlogic.process_order(order)
+    analizelogic.process_order(order)
+    io.emit('update', dashboardlogic.get_data())
 }
 
 export{recieve_order}
