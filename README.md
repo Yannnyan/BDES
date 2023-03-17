@@ -33,8 +33,12 @@ The Order Register entity is used to manage orders (i.e recieve only relevant or
 The Order entity holds the details about an order.
 The Dashboard logic and formulating is done in the DashboardLogic Class, The same goes for the AnalyzeLogic, and the SearchLogic.
 # Kafka (cloud Karakafka service)
-
+For this project I created a topic in cloud karafka, then i used rdkafka library in nodejs to build a consumer side and a producer side. The consumer is the main server, and the producer is the pizza company simulator. i used ![this](https://github.com/CloudKarafka/nodejs-kafka-example/blob/main/consumer.js) sample code for the consumer, and this ![this](https://github.com/CloudKarafka/nodejs-kafka-example/blob/main/producer.js) for the producer. To use this in my application I had to create a seperate config file, such that people can't see my configurations and spam my server. note that in the config I had to change medata.broker.list to the information in cloudkarafka, and aswell username and password ofcourse. also, I had to create a topic in cloud karafka and use the topic's name in the code.
+* Things I found out while working with kafka:
+1) Kafka is designed to recieve a lot of data, big enough such that nodejs can't handle them I got error that nodejs had memory leaks due to using the kafka consumer the wrong way, instead i used the kafka consumer to send http messages to the server which is wrong. So I fixed it running the kafka consumer asyncroniously from the server code.
+2) SetTimeout is unnecessary and kills the consumer after threshold. So I used the kafka consumer and was surprised that it shut down after few minutes.
 # Redis (docker image)
+
 # Mongodb (mongoose ODM, cloud atlas)
 # Nodejs express 
 # Bigml(cloud)
