@@ -26,7 +26,7 @@ class AnalizeLogic
                 // not enough for association rules
                 calback(
                     {
-                        error: 'not enough records for association rules'
+                        error: 'not enough records for association rules need 100, got: ' + orders.length
                     })
             }
             else{

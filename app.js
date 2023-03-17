@@ -6,6 +6,7 @@ import { Server } from 'socket.io'
 import { SearchLogic } from './Model/SearchLogic.js'
 import {AnalizeLogic} from './Model/AnalizeLogic.js'
 import {connectKafka} from './KafkaConsumer.js'
+
 connectKafka()
 const dashboardlogic = new DashboardLogic()
 
@@ -72,16 +73,6 @@ app.get('/analyzesmth', (req, res) => {
         res.send(JSON.stringify(data));
     })
 
-    // if(typeof start === undefined || end === undefined)
-    //     res.send(JSON.stringify());
-    // else
-    // {
-    //     // insert learning model output here
-    //     res.send(JSON.stringify([
-    //         {'Antecedent': 'Mushroom', 'Consequent': 'Onion', 'Support(%)': 26.69, 'Confidence(%)': 38.58},
-    //         {'Antecedent': 'Mushroom', 'Consequent': 'Olive', 'Support(%)': 23.00, 'Confidence(%)': 79.43}
-    //     ]));
-    // }
 })
 
 app.post('/order', (req, res) => {

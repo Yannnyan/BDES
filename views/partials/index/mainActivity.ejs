@@ -45,7 +45,7 @@
         document.getElementById("orders_inprog").firstChild.innerHTML = "Orders In Progress: \n" +data.open_orders;
         document.getElementById("total_orders").firstChild.innerHTML = "Total Orders: \n" +data.total;
         document.getElementById("time").innerHTML = "Last Updated Date: " + data.time;
-        make_horizontal_histogram('top_5_toppings', data.toppings,100);
+        make_horizontal_histogram('top_5_toppings', data.toppings,300);
         make_pie_chart('orders_by_region', data.orders_by_region);
         make_horizontal_histogram('top_5_branch_ordertime', data.avg_duration_per_region, 300);
         make_graph('total_orders_during_day', data.time_order)
@@ -55,7 +55,7 @@
     const data = JSON.parse('<%- JSON.stringify(data) %>');
     var pie_data = {a: 9, b: 20, c:30, d:8, e:12}
     make_pie_chart('orders_by_region', data.orders_by_region, 'Orders By Region');
-    make_horizontal_histogram('top_5_toppings', data.toppings, 100, 'Top 5 Toppings', 'Amount (Units)', 'Topping Types');
+    make_horizontal_histogram('top_5_toppings', data.toppings, 300, 'Top 5 Toppings', 'Amount (Units)', 'Topping Types');
     make_horizontal_histogram('top_5_branch_ordertime', data.avg_duration_per_region, 300, 'Top 5 Branch Order Time', 'Avg Order Duration (Seconds)', 'Branch Names' );
     make_graph('total_orders_during_day', data.time_order, 'Total Orders During Day', 'Time (Grouped by hour)','Orders (Units)')
 
@@ -227,7 +227,6 @@
             // .attr("dx", "4em")
             // .attr("dy", '2.5em')
             .attr("transform", "rotate(25)");
-        
         //Bars
         svg2.selectAll("myRect")
             .data(data)
@@ -300,8 +299,10 @@
         // d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/connectedscatter.csv",
             
             // Add X axis --> it is a date format
+            const start_date = new Date()
+            start_date.setDate(start_date.getDate() - 1)
             var x = d3.scaleTime()
-            .domain([Date.now(), Date.now() + 21 * 60 * 60 * 1000])
+            .domain([start_date.getTime(), start_date.getTime() + 21 * 60 * 60 * 1000])
             .nice()
             // .domain([new Date(1554236172000), new Date(1554754572000) + 21 * 55 * 60 * 1000])
             // .domain(d3.extent(data, function(d) { return d.X_Axis; }))
@@ -320,7 +321,7 @@
             .attr("transform", "rotate(-65)");
             // Add Y axis
             var y = d3.scaleLinear()
-            .domain( [0, 100])
+            .domain( [0, 1000])
             .range([ height, 0 ]);
             svg.append("g")
             .call(d3.axisLeft(y));

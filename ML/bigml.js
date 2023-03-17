@@ -11,6 +11,7 @@ import {config} from '../config.js'
 var filename = './data/toppings.csv'
 var resource_uri = ''
 var BIGML_AUTH = config.BIGML_AUTH
+var BIGML_AUTH_STR = '?username=' + BIGML_AUTH.user + ";api_key=" + BIGML_AUTH.api_key
 
 async function write_to_CSV(orders, calback)
 {
@@ -38,21 +39,21 @@ async function write_to_CSV(orders, calback)
         {
             console.log(err)
         }
-    calback()
     }
+    calback()
 }
 
-async function create_association(calback)
+function create_association(calback)
 {
     var connection = new bigml.BigML(config.BIGML_AUTH.user,config.BIGML_AUTH.api_key)
     var source = new bigml.Source(connection)
-    source.create('./toppings.csv', function(error, sourceInfo) {
+    source.create(filename, function(error, sourceInfo) {
         var dataset = new bigml.Dataset(connection)
         dataset.create(sourceInfo, function(error, datasetInfo) {
             var association = new bigml.Association(connection)
             association.create(datasetInfo, function(error, assosInfo) {
                 console.log(assosInfo)
-                resource_uri = assosInfo.location + assosInfo.resource.split('/')[1] + BIGML_AUTH
+                resource_uri = assosInfo.location + assosInfo.resource.split('/')[1] + BIGML_AUTH_STR
                 console.log(resource_uri)
             })
         })
@@ -60,14 +61,18 @@ async function create_association(calback)
     calback()
 
 }
+async function get_associations()
+{
+    var data = await fetch(resource_uri)
+    data = await data.json()
+    return data
+}
 
 async function retrieve_associations(calback)
 {
-    setTimeout(async function() {
-        var data = await fetch(resource_uri)
-        data = await data.json()
+    var when_got = async function(data) {
+        
         console.log(data)
-        // console.log(JSON.stringify(data, null, 2))
         let items = data.associations.items
         let rules = data.associations.rules
         console.log(data.associations.rules)
@@ -90,12 +95,34 @@ async function retrieve_associations(calback)
             ret.push(data)
         }
         calback(ret)
-    },15000)
+    }
+    let not_ok = true
+    let timed_out = 0
+    var query_data = async function() {
+        let associations = await get_associations()
+        // console.log(associations)
+        if(associations.code === 200)
+        {
+            when_got(associations)
+        }
+        else
+        {
+            setTimeout(query_data, 15000)
+        }
+        timed_out += 1
+        if(timed_out === 10)
+        {
+            return null// couldn't get associations after 2.5 minutes, that's too long
+
+        }
+    }
+    // try to query the associations every 15 seconds
+    setTimeout(query_data,15000)
     
 }
 // retrieve_associations()
 
-// await create_association(retrieve_associations)
+// await create_association(function() {retrieve_associations(console.log)})
 
 // // create_source('./basket.csv')
 // var connection = new bigml.BigML('PROJECTTIKTIK','02161ce707e6ed37bea44f43111966f392488311')

@@ -96,7 +96,7 @@ async function Save_Order(order)
 
 async function Get_Orders(start_date, end_date)
 {
-    var documents = await Pizza_Model.find({start_date: { $gte: start_date, $lt: end_date } })
+    var documents = await Pizza_Model.find({start_date: { $gte: start_date, $lte: end_date } })
     logger.log('info','retrieved data')
     logger.log('info',documents)
     return documents;
