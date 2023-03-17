@@ -14,7 +14,7 @@ Big Data Enterprise System </br>
 # Big Data Pizza Information system 🍕
 1) This project represents a Big Data information system to manage orders in real time of a company, say a pizza company, which has several branches that deliver order information to the system. 
 2) The Orders are delivered by a Pizza company simulator, which runs on python then for each order information ready to deliver send http message to a small nodejs which is connected to kafka and it's purpose is to store the orders untill kafka is ready to deliver them, and then deliver them using kafka producer. 
-* Note - In this project kafka is not running localy, instead I used Cloud service CloudKarafka.
+* Note - In this project kafka brokers are not running localy, instead I used Cloud service CloudKarafka.
 3) Then the orders are recieved by the main express server which stores the orders in several databases, ie. Elasticsearch, Mongodb, Redis. Each database has a purpose yet we used several databases instead of one, only to practice use of these. 
 * Note - Elasticsearch and Redis are running on two docker images. and Im using cloud service to communicate with mongodb called Atlas with ODM (Object Document Mapper) Mongoose.
 4) Redis has a purpose to store only hot details according to lambda architecture, which has a cold channel and a hot channel. Then we use those details to aggregate and present to a manager of the company or whichever stock holders, details about branches processing times and company spendings.
@@ -110,9 +110,24 @@ start_date : {
     }
 ```
 * Note that in version 8.15 that i used, old tutorials for mongoose which use callback functions are no longer relevant because new mongoose does not support callback functions. 
-* So I figured that i would create async set order and get order and await for the promise.
+* So I figured that i would create async set order and get orders and await for the promise.
 # Nodejs express 
-
+I used Nodejs with express for the main server, and also for the simulator server.
+Things I struggled with coding the main server:
+* Most tutorials use common javascript, yet it's recommended to use ES type. At first I didn't get why i can't use require in my code. Then I figured that if the module is named with .js then the javascript must be written in ES format, but if the module is named with .cjs then it's written in common javascript format. That's actually very important.
+* I Figured how to import Modules written in cjs with es by using the syntax:
+```js
+import x from 'module_y'
+```
+* To recieve json/application data with express, I had to tell explicitly for express to use 
+```js
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+```
+* To set ejs rendering I had to use:
+```js
+app.set('view engine', 'ejs');
+```
 # Bigml(cloud)
 # Elasticsearch(docker image)
 # winston (logger)
