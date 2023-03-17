@@ -1,6 +1,17 @@
 # BDES
-Big Data Enterprise System
-# Big Data Pizza Information system
+Big Data Enterprise System </br>
+![image](https://user-images.githubusercontent.com/82415308/225888317-1fa13b99-fb95-4a34-be04-ac7721f79713.png)
+![image](https://user-images.githubusercontent.com/82415308/225888083-e7386fe9-6a4a-4866-864b-6dbeebfaf75c.png)
+![image](https://user-images.githubusercontent.com/82415308/225888250-dbcf455b-3ac6-429e-bc4d-3339ce6bba19.png)
+![image](https://user-images.githubusercontent.com/82415308/225611279-bc910309-cb89-490a-a103-91442a7dfe4c.png)
+![image](https://user-images.githubusercontent.com/82415308/225889198-ba6b0668-4fe0-4b43-b18c-21ba4430642d.png)
+![image](https://user-images.githubusercontent.com/82415308/225889055-8952235b-07b5-414e-a5e3-6e830278f341.png)
+![image](https://user-images.githubusercontent.com/82415308/225889479-d18efb28-5a88-4b10-ae47-181c80ee0e8a.png)
+![image](https://user-images.githubusercontent.com/82415308/225889592-6ac0f5fc-71c4-4c00-9515-ab2eee3f6476.png)
+![image](https://user-images.githubusercontent.com/82415308/225889646-e7a84d83-f862-4f86-af16-21cd2b259bf8.png)
+![image](https://user-images.githubusercontent.com/82415308/225889716-723d5773-5010-4a14-8885-ab45b3be8e7c.png)
+
+# Big Data Pizza Information system 🍕
 1) This project represents a Big Data information system to manage orders in real time of a company, say a pizza company, which has several branches that deliver order information to the system. 
 2) The Orders are delivered by a Pizza company simulator, which runs on python then for each order information ready to deliver send http message to a small nodejs which is connected to kafka and it's purpose is to store the orders untill kafka is ready to deliver them, and then deliver them using kafka producer. 
 * Note - In this project kafka is not running localy, instead I used Cloud service CloudKarafka.
@@ -9,6 +20,7 @@ Big Data Enterprise System
 4) Redis has a purpose to store only hot details according to lambda architecture, which has a cold channel and a hot channel. Then we use those details to aggregate and present to a manager of the company or whichever stock holders, details about branches processing times and company spendings.
 5) Elasticsearch is purposed to store all the orders and to pull out orders in a certain date using method to pull only the top most relevent orders first and if the user requires more then we pull more.
 6) Mongodb is purposed to store all orders and is used to train a machine learning association model to see the relationships between the most popular toppings of pizza users requested in thier orders.
+6.5) Bigml Cloud Service is used to train such a model.
 * Note - Mongodb and Elasticsearch are both in the Cold Channel, yet Redis is in the Hot Channel.
 7) Dashboard is created from Redis's data and is created using D3JS library which is popular for creating 2d charts. The Dashboard is constantly being updated using WebSockets Protocol, whenever a new order is consumed by the kafka consumer, a function is called to update the databases, and then update the dashboard using websockets to tell the users to update thier data.
 8) Unit testing were done using Mocha Chai testing library for nodejs and express.
