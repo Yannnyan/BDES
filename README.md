@@ -129,6 +129,20 @@ app.use(express.json());
 app.set('view engine', 'ejs');
 ```
 # Bigml(cloud)
+Bigml is using GET POST PUT DELETE syntax for everything, so i actually used my browser to check some of the stuff i created in the service. 
+* Note that the connection parameters like username and password are passed in the URI. docs can be found [here](https://bigml.com/api/authentication)
+* I used the help code and bigml library for js, can be found here: [here](https://github.com/bigmlcom/bigml-node#:~:text=var%20bigml%20%3D-,require,-(%27bigml%27)
+* I struggled quite a bit with bigml, one main issue i had is that i can't exactly know when my model was created. And my real time application needs to know when it's finished. so to solve this issue I queried bigml every 15 seconds to check if it's ready or not.using setTimeout with async function calback, to await for promises in async outer function so my code will not run too early. 
+```js
+async function retrieve_associations(calback)
+{
+    setTimeout(async function() {
+        var data = await fetch(resource_uri)
+        data = await data.json()
+        ...
+        ,15000)
+```
+* bigml with node supports csv file formatting and other formats that were not familiar to me, so everytime I had to write all my data to csv file before creating associations.
 # Elasticsearch(docker image)
 # winston (logger)
 # config files
