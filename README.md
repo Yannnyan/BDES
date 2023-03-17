@@ -20,7 +20,7 @@ Big Data Enterprise System </br>
 4) Redis has a purpose to store only hot details according to lambda architecture, which has a cold channel and a hot channel. Then we use those details to aggregate and present to a manager of the company or whichever stock holders, details about branches processing times and company spendings.
 5) Elasticsearch is purposed to store all the orders and to pull out orders in a certain date using method to pull only the top most relevent orders first and if the user requires more then we pull more.
 6) Mongodb is purposed to store all orders and is used to train a machine learning association model to see the relationships between the most popular toppings of pizza users requested in thier orders.
-6.5) Bigml Cloud Service is used to train such a model.
+* Note Bigml Cloud Service is used to train such a model.
 * Note - Mongodb and Elasticsearch are both in the Cold Channel, yet Redis is in the Hot Channel.
 7) Dashboard is created from Redis's data and is created using D3JS library which is popular for creating 2d charts. The Dashboard is constantly being updated using WebSockets Protocol, whenever a new order is consumed by the kafka consumer, a function is called to update the databases, and then update the dashboard using websockets to tell the users to update thier data.
 8) Unit testing were done using Mocha Chai testing library for nodejs and express.
