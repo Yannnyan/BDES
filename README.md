@@ -24,7 +24,7 @@ Big Data Enterprise System </br>
 * Note - Mongodb and Elasticsearch are both in the Cold Channel, yet Redis is in the Hot Channel.
 7) Dashboard is created from Redis's data and is created using D3JS library which is popular for creating 2d charts. The Dashboard is constantly being updated using WebSockets Protocol, whenever a new order is consumed by the kafka consumer, a function is called to update the databases, and then update the dashboard using websockets to tell the users to update thier data.
 8) Unit testing were done using Mocha Chai testing library for nodejs and express.
-# Domain Driven Design, And Bussiness Entities
+# Object Oriented Design, And Bussiness Entities
 Entities such as a Company, Branch, Order Register, Order are used to create an elegant solution to processing data in layers, and introduce easy maintainability with seperation of concerns principle that for each entity there is a seperate purpose or role.
 * Note that the design of these entities is top to bottom, and linear. That means, the functions used by company entity use only branch functions, and branch functions use only order register functions. Which makes it easy to refactor, and change code. </br>
 - The Company entity holds the most high level role, which is to manage relevant branches(i.e to filter closed branches, to aggregate data from branches).
