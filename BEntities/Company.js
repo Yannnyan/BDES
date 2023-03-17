@@ -26,11 +26,16 @@ class Company{
             this.company_name = 'default'
             return
         }
+        let date = new Date()
         this.company_name = data.company.company_name || 'default'
         for(let branch of data.company.branches)
         {
             this.branches.push(new Branch(branch))
         }
+        // remove branches that are irrelevant to today
+        this.branches = this.branches.filter((branch) => !branch.get_total_orders() === 0 ||
+                            branch.order_register.orders.find((order) => new Date(order.order_date).getDay() === date.getDay()))
+
     }
     recieve_order(order)
     {

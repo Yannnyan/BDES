@@ -13,7 +13,6 @@ async function get_data_from_redis(calback)
     // updating the data object with values recieved
     redisclient.get('data')
     .then((res) => {
-        console.log(res)
         calback(JSON.parse(res))
     })
 }
