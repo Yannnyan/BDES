@@ -1,5 +1,6 @@
 # BDES
 Big Data Enterprise System </br>
+# Technologies used
 ![image](https://user-images.githubusercontent.com/82415308/225888317-1fa13b99-fb95-4a34-be04-ac7721f79713.png)
 ![image](https://user-images.githubusercontent.com/82415308/225888083-e7386fe9-6a4a-4866-864b-6dbeebfaf75c.png)
 ![image](https://user-images.githubusercontent.com/82415308/225888250-dbcf455b-3ac6-429e-bc4d-3339ce6bba19.png)
@@ -10,6 +11,8 @@ Big Data Enterprise System </br>
 ![image](https://user-images.githubusercontent.com/82415308/225889592-6ac0f5fc-71c4-4c00-9515-ab2eee3f6476.png)
 ![image](https://user-images.githubusercontent.com/82415308/225889646-e7a84d83-f862-4f86-af16-21cd2b259bf8.png)
 ![image](https://user-images.githubusercontent.com/82415308/225889716-723d5773-5010-4a14-8885-ab45b3be8e7c.png)
+# Project Overview
+![image](https://user-images.githubusercontent.com/82415308/226089818-a7f2d28a-4a69-481d-b1d2-c732ccaa71f4.png)
 
 # Big Data Pizza Information system 🍕
 1) This project represents a Big Data information system to manage orders in real time of a company, say a pizza company, which has several branches that deliver order information to the system. 
@@ -38,6 +41,7 @@ For this project I created a topic in cloud karafka, then i used rdkafka library
 1) Kafka is designed to recieve a lot of data, big enough such that nodejs can't handle them I got error that nodejs had memory leaks due to using the kafka consumer the wrong way, instead i used the kafka consumer to send http messages to the server which is wrong. So I fixed it running the kafka consumer asyncroniously from the server code.
 2) SetTimeout is unnecessary and kills the consumer after threshold. So I used the kafka consumer and was surprised that it shut down after few minutes.
 # Lambda Architecture(Hot channel (redis))
+![image](https://user-images.githubusercontent.com/82415308/226089791-806380c1-dc38-4273-9f2f-a6e5544e8c94.png)
 ## Redis (docker image)
 To use redis in my application I downloaded a docker image called 'redis', also note that you can pass redis through docker the enviroment variable 
 ```js
