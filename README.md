@@ -254,8 +254,12 @@ var socket = io('localhost:3000');
 
 
 # Dashboard (d3 library)
-I used D3JS library to make and style graphs in the dashboard. 
-
+One issue I had working with d3js or client side rendering while using ejs, is how to pass the data to the client code.</br>
+To solve this issue i used this method i found:
+```js
+const data = JSON.parse('<%- JSON.stringify(data) %>');
+```
+So in this method we use a string to pass the ejs data, then parse it using JSON.parse.
 # Pizza Simulator
 In this project to generate the orders, I used a simulator that opens branches as threads which each one has a worker slack number, and number of average orders which is randomly generated between a range. Each branch has a Producer thread and a Consumer thread. The producer thread is generating orders, and the consumer thread is recieving orders from the producer and working on them. when each thread finished an order, then it sends the javascript nodejs server to knowledge that the order was opened or finished.</br>
 Sample code for work function of a branch:
@@ -281,7 +285,8 @@ async def start(self):
 * Note that there is difference between run(), and start(). start() opens a new thread that excecuts the task, and run() excecute the task on the current thread instead.
 # Mocha- Chai Testing
 ![image](https://user-images.githubusercontent.com/82415308/225611279-bc910309-cb89-490a-a103-91442a7dfe4c.png)
-
+One thing I need to practice is TDD, since it saves so much time in the end while working on integrating systems the most basic stuff need to work well, and using tests for the entities really helped me figure where my issues are, and mostly it was logic errors and data deserializing errors.</br>
+Running tests example with mocha:
 ![image](https://user-images.githubusercontent.com/82415308/225610830-8e868ecf-0c69-42e9-9bc1-879bf12e9f50.png)
 
 
