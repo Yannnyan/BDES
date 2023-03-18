@@ -245,6 +245,29 @@ var socket = io('localhost:3000');
 # Dashboard (d3 library)
 I used D3JS library to make and style graphs in the dashboard. 
 
+# Pizza Simulator
+In this project to generate the orders, I used a simulator that opens branches as threads which each one has a worker slack number, and number of average orders which is randomly generated between a range. Each branch has a Producer thread and a Consumer thread. The producer thread is generating orders, and the consumer thread is recieving orders from the producer and working on them. when each thread finished an order, then it sends the javascript nodejs server to knowledge that the order was opened or finished.
+sample code for work function of a branch:
+```python
+def work(self):
+        producer = threading.Thread(target=self.recieve_orders,name="producer thread")
+        consumer = threading.Thread(target=self.handle_orders, name="consumer thread")
+        consumer.start()
+        producer.start()
+        threading.Thread.join(consumer)
+        threading.Thread.join(producer)
+```
+sample code for start function of a company which starts all the branches work fucntion
+```python
+async def start(self):
+        # get the coroutine objects
+        lst = []
+        for branch in self.branches:
+            lst.append(threading.Thread(target=branch.work))
+        for branch_worker in lst: branch_worker.start()
+        for branch_worker in lst: threading.Thread.join(branch_worker)
+```
+* Note that there is difference between run(), and start(). start() opens a new thread that excecuts the task, and run() excecute the task on the current thread instead.
 # Mocha- Chai Testing
 ![image](https://user-images.githubusercontent.com/82415308/225611279-bc910309-cb89-490a-a103-91442a7dfe4c.png)
 
