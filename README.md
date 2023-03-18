@@ -1,5 +1,6 @@
 # BDES
 Big Data Enterprise System </br>
+Video of the system: https://www.youtube.com/watch?v=8xHMvrMCn5s
 # Technologies used
 ![image](https://user-images.githubusercontent.com/82415308/225888317-1fa13b99-fb95-4a34-be04-ac7721f79713.png)
 ![image](https://user-images.githubusercontent.com/82415308/225888083-e7386fe9-6a4a-4866-864b-6dbeebfaf75c.png)
