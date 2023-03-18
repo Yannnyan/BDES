@@ -284,9 +284,9 @@ async def start(self):
 ```
 * Note that there is difference between run(), and start(). start() opens a new thread that excecuts the task, and run() excecute the task on the current thread instead.
 # Mocha- Chai Testing
-![image](https://user-images.githubusercontent.com/82415308/225611279-bc910309-cb89-490a-a103-91442a7dfe4c.png)
+![image](https://user-images.githubusercontent.com/82415308/225611279-bc910309-cb89-490a-a103-91442a7dfe4c.png) </br>
 One thing I need to practice is TDD, since it saves so much time in the end while working on integrating systems the most basic stuff need to work well, and using tests for the entities really helped me figure where my issues are, and mostly it was logic errors and data deserializing errors.</br>
-Running tests example with mocha:
+Running tests example with mocha: </br>
 ![image](https://user-images.githubusercontent.com/82415308/225610830-8e868ecf-0c69-42e9-9bc1-879bf12e9f50.png)
 
 
