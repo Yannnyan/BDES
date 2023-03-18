@@ -205,7 +205,18 @@ I used fairly simple gitignore i found to ignore node modules and package, and l
 # Server side Rendering (EJS)
 I used card based design to server side render with ejs.
 Card based design looks like this:
-![image](https://user-images.githubusercontent.com/82415308/225989244-15448d44-ac3c-483d-a3ca-55d86f7b1852.png)
+```ejs
+<%- include('partials/head.ejs') %>
+<script src="/Controllers/search/controller.js" type="text/javascript"></script>
+</head>
+<body>
+    <div class="navigation"><%- include('partials/navigation') %></div>
+    <div class="search"><%- include('partials/search/search.ejs') %></div>
+    <div class="sidebar"><%- include('partials/sidebar.ejs') %></div>
+    <div class="results"><%- include('partials/search/results.ejs') %></div>
+
+<%- include('partials/end.ejs') %>
+```
 where we can see that we have 4 main components inside our body tag, which is the navigation bar on top which tells up where we are, the content of the page i.e search.ejs, and the sidebar which has links to traverse the site, and a results card which contains the result from the search in this particular page.
 * to pass data from node to the cards, we can use:
 ```js
